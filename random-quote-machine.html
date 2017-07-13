@@ -4,15 +4,104 @@
     <title>Random Quote Machine</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type ="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+    <script language="JavaScript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js"></script>
       <link type ="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
     <style>
     *{
       margin:0;
       padding:0;
     }
+    #tweet{
+      float:left;
+    }
+    #copy-text {
+      float:left;
+    }
+    .button-group{
+      margin-top: 30px;
+    }
+    footer {
+      margin:100px;
+
+    }
+    body{
+      position: relative;
+      background-color: grey;
+    }
+    .well{
+      background-color:white;
+      margin:auto;
+    }
+    p{
+      font-family: 'Comic Sans MS';
+      text-align: center;
+    }
+
     </style>
   </head>
   <body>
+    <div class="container">
+      <div class="row">
+        <h1 class="text-center">Random Quote Generator!</h1>
+      <p class="small">This site will display random quotes using the <a href="http://forismatic.com/" target="_blank">Forismatic</a> API. By using the Tweet Button you can tweet the quote. It will take you to a new page where you might need to edit the post if the quote is too long.</p>
+      </div>
+      <div class="row">
+        <div class="well">
+          <p class="text-quote lead blockquote" id="text-quote-copy"></p>
+          <p class="text-right"><em class="text-author"></em></p>
+        </div>
+               </div>
+               <div class="row">
+          <div class="button-group">
+          <a class="twitter-share-button" href="https://twitter.com/intent/tweet" data-size="large" target="_blank">
 
+              <button type="button" class="btn btn-secondary" id="tweet">Tweet It!</button>
+            </a>
+              <button type="button" class="btn btn-primary copy-button" id="copy-text" data-clipboard-action="copy" data-clipboard-target="#text-quote-copy">Copy!</button>
+
+        </div>
+
+        <div class="text-center">
+        <button type="button" class="btn btn-primary btn-lg" id="quote">New Quote!</button>
+         </div>
+</div>
+    <footer class="text-center">
+
+  <p>Copyright © Utsav Kapoor 2015. All Rights Reserved</p>
+  </footer>
+</div>
+<script type="text/javascript">
+url = "http://api.forismatic.com/api/1.0/?method=getQuote&key=457653&format=jsonp&lang=en&jsonp=?";
+var colors = ['#16a085', '#27ae60', '#2c3e50', '#f39c12', '#e74c3c', '#9b59b6', '#FB6964', '#342224', "#472E32", "#BDBB99", "#77B1A9", "#73A857"];
+
+var quote = function(data){
+$(".text-quote").text(data.quoteText);
+  console.log("Author:" + data.quoteAuthor);
+if(data.quoteAuthor==""){
+  data.quoteAuthor='Unknown';
+}
+  $(".text-author").text("-" + data.quoteAuthor);
+  $(".text-link").text(data.quoteLink);
+};
+$("#quote").click(function(){
+$.getJSON(url,quote,'jsonp');
+var index = Math.floor(Math.random() * 11);
+$("body").css("background-color",colors[index]);
+$(".text-author").css("color",colors[index]);
+$(".text-quote").css("color",colors[index]);
+console.log(colors[index]);
+});
+$(document).ready(function(){
+$.getJSON(url,quote,'jsonp');
+})
+var clip = new Clipboard('.copy-button');
+
+clip.on('success', function(e) {
+});
+</script>
   </body>
+
+
+
+
 </html>
