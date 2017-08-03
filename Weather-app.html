@@ -12,13 +12,143 @@
       padding:0;
       margin:0;
     }
+    .row{
+      margin:5%;
+    }
+    body{
+      background-color: black;
+      color:white;
+    }
+    #temp_unit{
+      cursor:pointer;
+      color: #006dcc;
+    }
+    #temp_unit:hover{
+      color:#005096;
+    }
   </style>
 </head>
 <body>
   <div class="container-fluid">
     <div class="row">
-
-    </div>
+      <div class="col-xs-12 col-s-12 col-md-12 text-center">
+        <h1><i class="fa fa-cloud" aria-hidden="true"></i>Weather App</h1>
+      </div>
+      </div>
+      <div class="row text-center">
+      <form id="form-id">
+        <div class="col-xs-12 col-s-12 col-md-12 text-center form-group">
+          <label style="float:left;">Enter City Name:</label>
+          <input type="text" autocomplete="off" class="form-control" style="background-color: black;color:white;" id="city_text">
+        </div>
+        <button class="btn btn-primary btn-lg" id="submit" onclick="new_city();return false;">Submit</button>
+        </form>
+      </div>
+      <div class="row well" style="background-color: black;color:white;">
+        <div class="col-xs-12 col-s-12 col-md-12 text-center">
+          <h3 id="City"></h3>
+        </div>
+        <div class="col-xs-12 col-s-12 col-md-12 text-center">
+          <h4><span id="temp"></span><span id="temp_unit" style="display:none;"> &#176; F</span></h4>
+        </div>
+        <div class="col-xs-12 col-s-12 col-md-12 text-center">
+          <h4 id="summary"></h4>
+        </div>
+        <div class="col-xs-12 col-s-12 col-md-12 text-center">
+          <canvas id="icon" width="128" height="128"></canvas>
+        </div>
+        <div class="col-xs-12 col-s-12 col-md-12 text-center">
+          <marquee id="daily_summary"></marquee>
+        </div>
+      </div>
   </div>
+  <script language="JavaScript" type="text/javascript" src="skycons.js"></script>
+  <script type="text/javascript">
+  var latitude;
+  var longitude;
+  var city="";
+  var country = "";
+  var skycons;
+  $(window).ready(function(){
+    skycons = new Skycons({"color": "white"});
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          latitude =  position.coords.latitude;
+          longitude = position.coords.longitude;
+            get_weather(latitude,longitude);
+        });
+      } else {
+        console.log("Geolocation is not supported by this browser.");
+      }
+  });
+
+  function new_city(){
+    console.log("I am here");
+  }
+
+  $("#temp_unit").click(function(){
+    var text = $("#temp_unit").text().split(" ")[2];
+    //console.log(text);
+    var temp = $("#temp").text();
+    if (text == "F"){
+      document.getElementById('temp').innerHTML = convert_to_celsius(temp);
+      document.getElementById('temp_unit').innerHTML = " &#176; C";
+    }
+    else {
+      document.getElementById('temp').innerHTML = convert_to_farenheit(temp);
+      document.getElementById('temp_unit').innerHTML = " &#176; F";
+    }
+  });
+
+  function get_weather(lat,lan)
+  {
+    var url = "https://api.darksky.net/forecast/485158dbb9e58f0e9763b5db59bd58dd/" + lat + "," + lan + "?callback=?";
+    $.getJSON(url, function(data){
+      //console.log(data);//drizzle,clouds,rain,snow,clear,thunderstorm
+      //document.getElementById('City').innerHTML = data.timezone;
+      if(city == "" && country == ""){
+      assign_city(lat,lan);
+      } else {
+        document.getElementById('City').innerHTML = city + "," + country;
+      }
+      document.getElementById('temp').innerHTML = Math.floor(parseInt(data.currently.apparentTemperature));
+      document.getElementById('temp_unit').style.display = "inline";
+      document.getElementById('summary').innerHTML = data.currently.summary;
+      var str = data.currently.icon;
+      skycons.add("icon", str);
+      skycons.play();
+      document.getElementById('daily_summary').innerHTML = data.daily.summary;
+
+    });
+  }
+
+  function assign_city(lat,lan){
+    var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+lat+"," + lan+ "&key=AIzaSyAC7p7sULwG-iPkBxLq7noOs1EUSNKuNuM";
+    var answer;
+    $.getJSON(url, function(data){
+      //console.log(data.results[5].formatted_address);
+      var temp = data.results[5].formatted_address.split(",");
+
+      document.getElementById('City').innerHTML =  temp[0] + "," + temp[2];
+    });
+  }
+
+  function get_latlan(city,country){
+    var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" +city+","+country +  "&key=AIzaSyAC7p7sULwG-iPkBxLq7noOs1EUSNKuNuM";
+    $.getJSON(url, function(data){
+      document.getElementById('City').innerHTML = city + "," + country;
+    });
+  }
+
+function convert_to_celsius(temp){
+  return Math.ceil((parseInt(temp)-32)/1.8);
+}
+
+function convert_to_farenheit(temp){
+  return Math.floor(parseInt(temp) * 1.8 + 32);
+}
+
+
+  </script>
 </body>
 </html>
