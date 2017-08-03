@@ -33,6 +33,7 @@
     <div class="row">
       <div class="col-xs-12 col-s-12 col-md-12 text-center">
         <h1><i class="fa fa-cloud" aria-hidden="true"></i>Weather App</h1>
+        <small><a href="https://darksky.net/poweredby/" target="_blank">Powered by Dark Sky</a></small>
       </div>
       </div>
       <div class="row text-center">
@@ -62,6 +63,10 @@
         </div>
       </div>
   </div>
+  <footer class="text-center">
+    <p> Developed by: <a href="https://github.com/utsavkapoor">Utsav Kapoor</a></p>
+    <p>Contact information: <a href="mailto:utsav.kapur@gmail.com">utsav.kapur@gmail.com</a>.</p>
+  </footer>
   <script language="JavaScript" type="text/javascript" src="skycons.js"></script>
   <script type="text/javascript">
   var latitude;
@@ -84,6 +89,11 @@
 
   function new_city(){
     console.log("I am here");
+    var temp = document.getElementById('city_text').value.split(",");
+    console.log(temp);
+    city = temp[0];
+    country = temp[1];
+    get_latlan(temp[0],temp[1]);
   }
 
   $("#temp_unit").click(function(){
@@ -104,7 +114,7 @@
   {
     var url = "https://api.darksky.net/forecast/485158dbb9e58f0e9763b5db59bd58dd/" + lat + "," + lan + "?callback=?";
     $.getJSON(url, function(data){
-      //console.log(data);//drizzle,clouds,rain,snow,clear,thunderstorm
+      console.log(data);//drizzle,clouds,rain,snow,clear,thunderstorm
       //document.getElementById('City').innerHTML = data.timezone;
       if(city == "" && country == ""){
       assign_city(lat,lan);
@@ -115,6 +125,7 @@
       document.getElementById('temp_unit').style.display = "inline";
       document.getElementById('summary').innerHTML = data.currently.summary;
       var str = data.currently.icon;
+      skycons.remove("icon");
       skycons.add("icon", str);
       skycons.play();
       document.getElementById('daily_summary').innerHTML = data.daily.summary;
@@ -127,7 +138,7 @@
     var answer;
     $.getJSON(url, function(data){
       //console.log(data.results[5].formatted_address);
-      var temp = data.results[5].formatted_address.split(",");
+      var temp = data.results[3].formatted_address.split(",");
 
       document.getElementById('City').innerHTML =  temp[0] + "," + temp[2];
     });
@@ -137,6 +148,10 @@
     var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" +city+","+country +  "&key=AIzaSyAC7p7sULwG-iPkBxLq7noOs1EUSNKuNuM";
     $.getJSON(url, function(data){
       document.getElementById('City').innerHTML = city + "," + country;
+      var new_lat = data.results[0].geometry.location.lat;
+      var new_lng = data.results[0].geometry.location.lng;
+      console.log(new_lat+","+new_lng);
+      get_weather(new_lat,new_lng);
     });
   }
 
