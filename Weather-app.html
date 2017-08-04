@@ -112,7 +112,7 @@
 
   function get_weather(lat,lan)
   {
-    var url = "https://api.darksky.net/forecast/485158dbb9e58f0e9763b5db59bd58dd/" + lat + "," + lan + "?callback=?";
+    var url = "https://api.darksky.net/forecast/<Dark sky Key>/" + lat + "," + lan + "?callback=?";
     $.getJSON(url, function(data){
       console.log(data);//drizzle,clouds,rain,snow,clear,thunderstorm
       //document.getElementById('City').innerHTML = data.timezone;
@@ -134,7 +134,7 @@
   }
 
   function assign_city(lat,lan){
-    var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+lat+"," + lan+ "&key=AIzaSyAC7p7sULwG-iPkBxLq7noOs1EUSNKuNuM";
+    var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+lat+"," + lan+ "&key=<Google API KEY>";
     var answer;
     $.getJSON(url, function(data){
       //console.log(data.results[5].formatted_address);
@@ -145,7 +145,7 @@
   }
 
   function get_latlan(city,country){
-    var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" +city+","+country +  "&key=AIzaSyAC7p7sULwG-iPkBxLq7noOs1EUSNKuNuM";
+    var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" +city+","+country +  "&key=<Google API KEY>";
     $.getJSON(url, function(data){
       document.getElementById('City').innerHTML = city + "," + country;
       var new_lat = data.results[0].geometry.location.lat;
