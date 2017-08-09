@@ -1,18 +1,193 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
-    <script language="JavaScript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>Twitch JSON API</title>
-    <style type="text/css">
-      * {
-        padding:0;
-        margin:0;
-      }
-    </style>
-  </head>
-  <body>
 
-  </body>
+<head>
+  <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
+  <script language="JavaScript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <title>Twitch JSON API</title>
+  <style type="text/css">
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    body {
+      background-color: #ecf0e7;
+    }
+  .row {
+      background-color: #5c5457;
+      padding-top:20px;
+    }
+    .heading {
+      font-weight: bold;
+      color: white;
+    }
+
+    .api-results {
+      border: 2px solid white;
+      margin-top: 5px;
+      list-style: none;
+      padding: 10px;
+      line-height: 50px;
+    }
+
+    li:hover {
+      border-left: 10px solid green;
+      margin-left: -10px;
+      text-decoration: none;
+    }
+
+    .online {
+      background-color: #b8cca6;
+    }
+
+    .offline {
+      background-color: #4a5e82;
+    }
+    a,a:visited,a:active{
+      color:black;
+      text-decoration: none;
+    }
+    h2, h3, p{
+      color:black;
+    }
+    .hidden {
+      display:none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row text-center heading">
+      <div class="col-xs-12 col-s-12 col-md-12">
+        <h1>TWITCH STREAMERS</h1>
+        <h4>The Page shows featured Twitch channels. To see specific group of channels click on "Show featured" button to deselect. You can also Click on Add Channel to add any other channel you want to see.</h4>
+      </div>
+    </div>
+    <div class="row text-center buttons">
+      <div class="btn-group btn-group-lg" id="selector">
+        <button type="button" class="btn btn-default" id="add">Add Channel</button>
+        <button type="button" class="btn btn-default" id="featured">Show Featured</button>
+      </div>
+    </div>
+    <div class= "row hidden" id="text-box">
+      <div class="col-xs-12 col-s-12 col-md-12 ">
+        <label>Channel Name:</label>
+        <div class="input-group">
+        <input type="text" class="form-control" autocomplete="off" id="text">
+        <span class="input-group-btn">
+                <input type="submit" class="btn btn-primary" id="submit">
+              </span>
+              </div>
+      </div>
+
+    </div>
+    <div class="row text-center buttons">
+      <div class="btn-group btn-group-lg" id="basic-selector">
+        <button type="button" class="btn btn-default" id="all">All</button>
+        <button type="button" class="btn btn-default" id="online">Online</button>
+        <button type="button" class="btn btn-default" id="offline">Offline</button>
+      </div>
+    </div>
+    <div class="row">
+        <ul id="results">
+        </ul>
+
+    </div>
+  </div>
+  <script type="text/javascript">
+  channels = ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp","test_channel"];
+
+  $("#add").on('click',function(){
+    $("#text-box").removeClass("hidden");
+  });
+  $("#submit").on('click',function(){
+      var data = $("#text").val();
+      $("#text-box").addClass("hidden");
+      channels.push(data);
+        $("#results").empty();
+      show_channels();
+  });
+
+  $('#basic-selector button').click(function() {
+    $("#text-box").addClass("hidden");
+    $(this).addClass('active').addClass("btn-primary").removeClass("btn-default").siblings().removeClass('active').removeClass("btn-primary").addClass("btn-default");
+    if(this.id == "online"){
+      $(".offline").addClass("hidden");
+      $(".online").removeClass("hidden");
+    } else if(this.id == "offline") {
+      $(".online").addClass("hidden");
+      $(".offline").removeClass("hidden");
+    } else {
+      $(".online , .offline").removeClass("hidden");
+    }
+});
+$("#featured").click(function(){
+  $("#text-box").addClass("hidden");
+  var $this = $(this);
+    if($this.data('clicked')) {
+  $this.data('clicked',false).removeClass('active').removeClass("btn-primary").addClass("btn-default");
+  $("#basic-selector button").prop("disabled",false);
+  $("#add").prop("disabled",false);
+  $("#results").empty();
+  show_channels();
+    }
+    else {
+        $this.data('clicked', true).addClass('active').addClass("btn-primary").removeClass("btn-default");
+        $("#basic-selector button").prop("disabled",true).removeClass("btn-primary").addClass("btn-default").removeClass('active');
+        $("#add").prop("disabled",true);
+        $("#results").empty();
+        show_featured();
+    }
+});
+
+$(document).ready(function(){
+  $("#featured").click();
+});
+
+function show_channels(){
+  $("#all").click();
+  channels.forEach(function(channel){
+  var url = "https://wind-bow.gomix.me/twitch-api/streams/" + channel + "?callback=?";
+  $.getJSON(url, function(data){
+    if(data.stream == null) {
+      var img_link = "https://dummyimage.com/50x50/ecf0e7/5c5457.jpg&text=0x3F";
+      var link ="#";
+      var text ="Offline";
+      $("#results").append("<li class='api-results offline'>"+create_logo(img_link)+create_name(channel,link)+ create_text(text,text)+"</li>");
+    } else {
+      var base = data.stream.channel;
+      $("#results").append("<li class='api-results online'>"+ create_logo(base.logo)+create_name(base.name,base.url)+ create_text(base.game,base.status)+"</li>");
+    }
+  });
+  });
+}
+
+function show_featured(){
+  var url = "https://wind-bow.gomix.me/twitch-api/streams/featured?limit=10&callback=?";
+  $.getJSON(url, function(data){
+    data.featured.forEach(function(data_channel){
+      var base = data_channel.stream.channel;
+      $("#results").append("<li class='api-results online'>"+ create_logo(base.logo)+create_name(base.name,base.url)+ create_text(base.game,base.status)+"</li>");
+    });
+  });
+}
+
+function create_logo(link){
+  var temp = "<img src="+link+" class='img-thumbnail col-xs-2 col-s-2 col-md-2' width='50' height='50'>";
+  return temp;
+}
+function create_name(name,channel_link){
+  var temp = "<div class='text-center'><h2 class='col-xs-10 col-s-10 col-md-10'><a href="+channel_link+" target='_blank'>"+name+"</a></h2></div>";
+  return temp;
+}
+function create_text(game,status){
+  var temp = "<div class='text-center'><h3>Game:"+game+"</h3><p>"+status+"</p></div>";
+  return temp;
+}
+  </script>
+</body>
+
 </html>
