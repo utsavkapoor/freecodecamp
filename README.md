@@ -6,7 +6,7 @@ Basic Front End Development:
 
 1. Tribute Page --> Tribute Page about a famous Personality with an Image and Text. External Link to the Personality Wikipedia Page is also there.
 
-2. Portfolio Page --> Code can be found at https://github.com/utsavkapoor/utsavkapoor.github.io and can be viewed at utsavkapoor.github.io. Developed using the help of You tube web series that can be found at https://www.youtube.com/watch?v=sJhhLvW-Xvg&list=PLqGj3iMvMa4KeBN2krBtcO3U90_7SOl-A. (Thank you Dev Tips!!!)
+2. Portfolio Page -->(Under development) Code can be found at https://github.com/utsavkapoor/utsavkapoor.github.io and can be viewed at utsavkapoor.github.io. Developed using the help of You tube web series that can be found at https://www.youtube.com/watch?v=sJhhLvW-Xvg&list=PLqGj3iMvMa4KeBN2krBtcO3U90_7SOl-A. (Thank you Dev Tips!!!)
 
 Intermediate Front End Development:
 
