@@ -17,3 +17,7 @@ Intermediate Front End Development:
 3. Wikipedia Viewer --> Single Page Application which returns a random Wikipedia Article. Search Icon Provides wikipedia articles related to the search Query. Wikipedia API was Used.
 
 4. Twitch JSON API --> Single Page Application which returns top 10 trending Twitch Channels. It can also show pre-defined channels. You can add new channels. It can show which channels are Online and Offline for pre-defined channels. Twitch API was used for this.
+
+Advanced Front End Development:
+
+1. Tic Tac Toe --> Single Page Application which lets you play tic tac toe game with computer with a reset option after a game is finished. 
